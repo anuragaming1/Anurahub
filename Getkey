@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Script - Key Activation System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; color: #333; 
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            padding: 15px 25px; border-radius: 15px; margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; color: white; }
+        .logo i { font-size: 2rem; color: #ffd700; }
+        .version { background: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px; color: white; }
+        
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .welcome-card { text-align: center; }
+        .icon-container {
+            width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+        }
+        .icon-container i { font-size: 2.5rem; color: white; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+            padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        
+        .btn-secondary {
+            background: #f8f9fa; color: #333; border: 2px solid #e9ecef; padding: 12px 25px;
+            border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 8px; width: 100%; justify-content: center;
+        }
+        .btn-secondary:hover { background: #e9ecef; border-color: #667eea; }
+        
+        .btn-copy { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+        .btn-copy:hover { background: #218838; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .input-group { display: flex; gap: 10px; align-items: center; }
+        .input-group input { 
+            flex: 1; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; 
+            font-size: 1rem; transition: border-color 0.3s ease; 
+        }
+        .input-group input:focus { outline: none; border-color: #667eea; }
+        .input-group input[readonly] { background-color: #f8f9fa; color: #666; }
+        
+        .hwid-container { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        
+        .tabs { display: flex; background: #f8f9fa; border-radius: 10px; padding: 5px; margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1; padding: 12px 20px; border: none; background: transparent; border-radius: 8px;
+            cursor: pointer; font-weight: 600; color: #666; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .tab-btn.active { background: white; color: #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .status-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .status-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #667eea; font-weight: 600; }
+        
+        .instructions { background: #e7f3ff; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .divider { height: 1px; background: #e9ecef; margin: 25px 0; }
+        
+        .getkey-container { max-width: 500px; margin: 50px auto; }
+        .success-box {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 1px solid #c3e6cb; color: #155724;
+            padding: 30px; border-radius: 15px; text-align: center; margin: 20px 0;
+        }
+        .key-display {
+            font-size: 1.2rem; font-weight: bold; background: white; padding: 15px; border-radius: 8px;
+            margin: 15px 0; border: 2px dashed #28a745; word-break: break-all;
+        }
+        
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; min-width: 300px; }
+        .loading-spinner { font-size: 2rem; color: #667eea; margin-bottom: 15px; }
+        
+        .hidden { display: none !important; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { flex-direction: column; gap: 10px; text-align: center; }
+            .tabs { flex-direction: column; }
+            .input-group { flex-direction: column; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Page -->
+    <div id="mainPage" class="container">
+        <header class="header">
+            <div class="logo"><i class="fas fa-key"></i><span>VIP SCRIPT</span></div>
+            <div class="version">v1.0.0</div>
+        </header>
+
+        <main class="main-content">
+            <section class="welcome-section" id="welcomeSection">
+                <div class="card welcome-card">
+                    <div class="icon-container"><i class="fas fa-rocket"></i></div>
+                    <h1>Chào Mừng Đến VIP Script</h1>
+                    <p>Kích hoạt script của bạn để trải nghiệm tính năng premium</p>
+                    <button class="btn-primary" onclick="showSection('activationSection')">Bắt Đầu Kích Hoạt</button>
+                </div>
+            </section>
+
+            <section class="activation-section hidden" id="activationSection">
+                <div class="card">
+                    <h2><i class="fas fa-user-cog"></i> Thông Tin Máy</h2>
+                    <div class="hwid-container">
+                        <label>HWID Của Bạn:</label>
+                        <div class="input-group">
+                            <input type="text" id="hwidDisplay" readonly>
+                            <button class="btn-copy" onclick="copyHWID()"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <small>Copy HWID này để nhận key</small>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h2><i class="fas fa-key"></i> Kích Hoạt Script</h2>
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <button class="tab-btn active" onclick="switchTab('getKeyTab')"><i class="fas fa-link"></i> Lấy Key Mới</button>
+                            <button class="tab-btn" onclick="switchTab('useKeyTab')"><i class="fas fa-play"></i> Kích Hoạt</button>
+                        </div>
+
+                        <div class="tab-content active" id="getKeyTab">
+                            <div class="form-group">
+                                <label>Bước 1: Lấy Link Nhận Key</label>
+                                <button class="btn-secondary" onclick="createLink()" id="getLinkBtn"><i class="fas fa-link"></i> Tạo Link Nhận Key</button>
+                            </div>
+
+                            <div class="link-result hidden" id="linkResult">
+                                <label>Link nhận key của bạn:</label>
+                                <div class="input-group">
+                                    <input type="text" id="generatedLink" readonly>
+                                    <button class="btn-copy" onclick="copyLink()"><i class="fas fa-copy"></i></button>
+                                </div>
+                                <button class="btn-secondary" onclick="openLink()" style="margin-top:10px;"><i class="fas fa-external-link-alt"></i> Mở Link</button>
+                            </div>
+
+                            <div class="instructions">
+                                <h4><i class="fas fa-info-circle"></i> Hướng Dẫn:</h4>
+                                <ol>
+                                    <li>Nhấn "Tạo Link Nhận Key"</li>
+                                    <li>Copy link và mở trong trình duyệt</li>
+                                    <li>Nhập HWID của bạn trên trang web</li>
+                                    <li>Copy key nhận được và dán vào đây</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="useKeyTab">
+                            <div class="form-group">
+                                <label>Nhập Key Của Bạn:</label>
+                                <input type="text" id="keyInput" placeholder="Dán key vào đây...">
+                            </div>
+                            <div class="key-actions">
+                                <button class="btn-primary" onclick="validateKey()" id="activateBtn"><i class="fas fa-play"></i> Kích Hoạt Script</button>
+                                <button class="btn-secondary" onclick="checkSavedKey()"><i class="fas fa-history"></i> Kiểm Tra Key Đã Lưu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="status-section">
+                <div class="status-card">
+                    <div class="status-header"><i class="fas fa-info-circle"></i><span>Thông Báo</span></div>
+                    <div class="status-content" id="statusContent">Chào mừng đến với VIP Script! Vui lòng làm theo hướng dẫn để kích hoạt.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Get Key Page -->
+    <div id="getKeyPage" class="container getkey-container hidden">
+        <div class="card">
+            <div class="icon-container"><i class="fas fa-key"></i></div>
+            <h1>Nhận Key Kích Hoạt</h1>
+            <div id="formSection">
+                <div class="form-group">
+                    <label for="userHWID">HWID Của Bạn:</label>
+                    <input type="text" id="userHWID" placeholder="Dán HWID từ script vào đây...">
+                    <small>HWID được hiển thị trong script của bạn</small>
+                </div>
+                <button class="btn-primary" onclick="getKey()" id="getKeyBtn"><i class="fas fa-key"></i> Nhận Key</button>
+                <div class="instructions">
+                    <h4><i class="fas fa-info-circle"></i> Hướng Dẫn:</h4>
+                    <ol>
+                        <li>Mở script và copy HWID</li>
+                        <li>Dán HWID vào ô trên</li>
+                        <li>Nhấn "Nhận Key" để lấy key kích hoạt</li>
+                        <li>Copy key và dán vào script</li>
+                    </ol>
+                </div>
+            </div>
+            <div id="resultSection" class="hidden"></div>
+            <button class="btn-secondary" onclick="showMainPage()" style="margin-top:20px;"><i class="fas fa-arrow-left"></i> Quay Lại Trang Chính</button>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal hidden" id="loadingModal">
+        <div class="modal-content">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <p id="loadingText">Đang xử lý...</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== BACKEND SIMULATION - Chạy hoàn toàn trên client ====================
+        class FakeBackend {
+            constructor() {
+                this.keys = new Map();
+                this.links = new Map();
+                this.loadFromStorage();
+            }
+
+            loadFromStorage() {
+                const saved = localStorage.getItem('fakeBackendData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.keys = new Map(data.keys);
+                    this.links = new Map(data.links);
+                }
+            }
+
+            saveToStorage() {
+                const data = {
+                    keys: Array.from(this.keys.entries()),
+                    links: Array.from(this.links.entries())
+                };
+                localStorage.setItem('fakeBackendData', JSON.stringify(data));
+            }
+
+            createLink() {
+                const linkId = 'link_' + Math.random().toString(36).substr(2, 9);
+                const expiresAt = Date.now() + 30 * 60 * 1000; // 30 phút
+                
+                this.links.set(linkId, {
+                    id: linkId,
+                    expiresAt: expiresAt,
+                    used: false
+                });
+                
+                this.saveToStorage();
+                return linkId;
+            }
+
+            validateLink(linkId) {
+                const link = this.links.get(linkId);
+                if (!link) return false;
+                if (link.used) return false;
+                if (Date.now() > link.expiresAt) return false;
+                return true;
+            }
+
+            createKey(hwid, linkId) {
+                if (!this.validateLink(linkId)) {
+                    throw new Error('Link không hợp lệ');
+                }
+
+                const key = 'KEY-' + Math.random().toString(36).substr(2, 9).toUpperCase() + 
+                           '-' + Math.random().toString(36).substr(2, 6).toUpperCase() +
+                           '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+                const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 giờ
+
+                this.keys.set(key, {
+                    key: key,
+                    hwid: hwid,
+                    linkId: linkId,
+                    createdAt: Date.now(),
+                    expiresAt: expiresAt,
+                    used: false
+                });
+
+                // Đánh dấu link đã sử dụng
+                const link = this.links.get(linkId);
+                if (link) {
+                    link.used = true;
+                }
+
+                this.saveToStorage();
+                return key;
+            }
+
+            validateKey(key, hwid) {
+                const keyData = this.keys.get(key);
+                if (!keyData) return false;
+                if (keyData.used) return false;
+                if (keyData.hwid !== hwid) return false;
+                if (Date.now() > keyData.expiresAt) return false;
+                
+                // Đánh dấu key đã sử dụng
+                keyData.used = true;
+                this.saveToStorage();
+                
+                return true;
+            }
+        }
+
+        // ==================== MAIN APPLICATION ====================
+        class KeySystem {
+            constructor() {
+                this.backend = new FakeBackend();
+                this.hwid = this.generateHWID();
+                this.currentLink = null;
+                this.isGetKeyPage = this.detectGetKeyPage();
+                
+                if (this.isGetKeyPage) {
+                    this.initializeGetKeyPage();
+                } else {
+                    this.initializeMainPage();
+                }
+            }
+
+            detectGetKeyPage() {
+                return window.location.search.includes('link=');
+            }
+
+            generateHWID() {
+                const timestamp = Date.now().toString(36);
+                const random = Math.random().toString(36).substr(2, 9);
+                return `HWID_${timestamp}_${random}`.toUpperCase();
+            }
+
+            // ==================== MAIN PAGE FUNCTIONS ====================
+            initializeMainPage() {
+                this.displayHWID();
+                this.checkSavedKey();
+                this.setupEventListeners();
+            }
+
+            displayHWID() {
+                const hwidElement = document.getElementById('hwidDisplay');
+                if (hwidElement) {
+                    hwidElement.value = this.hwid;
+                }
+            }
+
+            async makeRequest(action, data = {}) {
+                this.showLoading('Đang xử lý...');
+                
+                // Giả lập delay mạng
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                try {
+                    let result;
+                    switch(action) {
+                        case 'create_link':
+                            const linkId = this.backend.createLink();
+                            result = {
+                                success: true,
+                                link_id: linkId,
+                                link_url: window.location.origin + window.location.pathname + '?link=' + linkId
+                            };
+                            break;
+                            
+                        case 'get_key':
+                            if (!this.backend.validateLink(data.link_id)) {
+                                result = { success: false, message: 'Link không hợp lệ hoặc đã hết hạn' };
+                            } else {
+                                const key = this.backend.createKey(data.hwid, data.link_id);
+                                result = { success: true, key: key };
+                            }
+                            break;
+                            
+                        case 'validate_key':
+                            const isValid = this.backend.validateKey(data.key, data.hwid);
+                            result = { success: isValid, message: isValid ? 'Key hợp lệ' : 'Key không hợp lệ' };
+                            break;
+                            
+                        default:
+                            result = { success: false, message: 'Action không hợp lệ' };
+                    }
+                    
+                    this.hideLoading();
+                    return result;
+                } catch (error) {
+                    this.hideLoading();
+                    this.showStatus('Lỗi: ' + error.message, 'error');
+                    return { success: false, message: error.message };
+                }
+            }
+
+            async createLink() {
+                const getLinkBtn = document.getElementById('getLinkBtn');
+                getLinkBtn.disabled = true;
+                getLinkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo link...';
+
+                const result = await this.makeRequest('create_link');
+                
+                getLinkBtn.disabled = false;
+                getLinkBtn.innerHTML = '<i class="fas fa-link"></i> Tạo Link Nhận Key';
+
+                if (result.success) {
+                    this.currentLink = result.link_url;
+                    this.showLinkResult();
+                    this.showStatus('Đã tạo link thành công! Link có hiệu lực trong 30 phút.', 'success');
+                } else {
+                    this.showStatus(result.message || 'Lỗi khi tạo link', 'error');
+                }
+            }
+
+            showLinkResult() {
+                const linkResult = document.getElementById('linkResult');
+                const generatedLink = document.getElementById('generatedLink');
+                
+                if (this.currentLink) {
+                    generatedLink.value = this.currentLink;
+                    linkResult.classList.remove('hidden');
+                }
+            }
+
+            async validateKey() {
+                const keyInput = document.getElementById('keyInput');
+                const key = keyInput.value.trim();
+                
+                if (!key) {
+                    this.showStatus('Vui lòng nhập key', 'warning');
+                    return;
+                }
+
+                const activateBtn = document.getElementById('activateBtn');
+                activateBtn.disabled = true;
+                activateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
+
+                const result = await this.makeRequest('validate_key', {
+                    key: key,
+                    hwid: this.hwid
+                });
+
+                activateBtn.disabled = false;
+                activateBtn.innerHTML = '<i class="fas fa-play"></i> Kích Hoạt Script';
+
+                if (result.success) {
+                    this.saveKey(key);
+                    this.showStatus('🎉 Kích hoạt thành công! Key có hiệu lực trong 24 giờ.', 'success');
+                    this.startMainScript();
+                } else {
+                    this.showStatus(result.message || 'Key không hợp lệ', 'error');
+                }
+            }
+
+            async checkSavedKey() {
+                const savedKey = this.getSavedKey();
+                if (savedKey) {
+                    this.showStatus('Đang kiểm tra key đã lưu...', 'warning');
+                    
+                    const result = await this.makeRequest('validate_key', {
+                        key: savedKey,
+                        hwid: this.hwid
+                    });
+
+                    if (result.success) {
+                        this.showStatus('Key đã lưu vẫn hợp lệ! Đang khởi chạy script...', 'success');
+                        this.startMainScript();
+                    } else {
+                        this.removeSavedKey();
+                        this.showStatus('Key đã lưu không còn hợp lệ. Vui lòng nhập key mới.', 'warning');
+                    }
+                } else {
+                    this.showStatus('Không tìm thấy key đã lưu', 'warning');
+                }
+            }
+
+            // ==================== GET KEY PAGE FUNCTIONS ====================
+            initializeGetKeyPage() {
+                document.getElementById('mainPage').classList.add('hidden');
+                document.getElementById('getKeyPage').classList.remove('hidden');
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const hwid = urlParams.get('hwid');
+                if (hwid) {
+                    document.getElementById('userHWID').value = hwid;
+                }
+            }
+
+            async getKey() {
+                const hwid = document.getElementById('userHWID').value.trim();
+                const getKeyBtn = document.getElementById('getKeyBtn');
+                const linkId = new URLSearchParams(window.location.search).get('link');
+                
+                if (!hwid) {
+                    alert('Vui lòng nhập HWID');
+                    return;
+                }
+
+                if (!linkId) {
+                    alert('Link không hợp lệ');
+                    return;
+                }
+
+                getKeyBtn.disabled = true;
+                getKeyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo key...';
+
+                try {
+                    const result = await this.makeRequest('get_key', {
+                        link_id: linkId,
+                        hwid: hwid
+                    });
+
+                    if (result.success) {
+                        this.showKeyResult(result.key);
+                    } else {
+                        this.showKeyError(result.message);
+                    }
+                } catch (error) {
+                    this.showKeyError('Lỗi: ' + error.message);
+                } finally {
+                    getKeyBtn.disabled = false;
+                    getKeyBtn.innerHTML = '<i class="fas fa-key"></i> Nhận Key';
+                }
+            }
+
+            showKeyResult(key) {
+                const formSection = document.getElementById('formSection');
+                const resultSection = document.getElementById('resultSection');
+                
+                formSection.classList.add('hidden');
+                resultSection.classList.remove('hidden');
+                
+                resultSection.innerHTML = `
+                    <div class="success-box">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h2>🎉 Thành Công!</h2>
+                        <p>Key của bạn đã được tạo thành công</p>
+                        <div class="key-display">${key}</div>
+                        <button class="btn-copy" onclick="copyKey('${key}')" style="margin: 10px;">
+                            <i class="fas fa-copy"></i> Copy Key
+                        </button>
+                        <p><strong>⏰ Key có hiệu lực trong 24 giờ</strong></p>
+                        <p><strong>🖥️ Chỉ hoạt động với HWID: ${document.getElementById('userHWID').value}</strong></p>
+                        <small>Copy key này và dán vào script để kích hoạt</small>
+                    </div>
+                `;
+            }
+
+            showKeyError(message) {
+                alert('Lỗi: ' + message);
+            }
+
+            // ==================== COMMON FUNCTIONS ====================
+            saveKey(key) {
+                localStorage.setItem('vip_script_key', key);
+                localStorage.setItem('vip_script_hwid', this.hwid);
+                localStorage.setItem('vip_script_activated', 'true');
+            }
+
+            getSavedKey() {
+                const savedKey = localStorage.getItem('vip_script_key');
+                const savedHWID = localStorage.getItem('vip_script_hwid');
+                
+                if (savedKey && savedHWID === this.hwid) {
+                    return savedKey;
+                }
+                return null;
+            }
+
+            removeSavedKey() {
+                localStorage.removeItem('vip_script_key');
+                localStorage.removeItem('vip_script_hwid');
+                localStorage.removeItem('vip_script_activated');
+            }
+
+            showSection(sectionId) {
+                document.querySelectorAll('section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) targetSection.classList.remove('hidden');
+            }
+
+            switchTab(tabId) {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                const tabBtn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+                const tabContent = document.getElementById(tabId);
+                
+                if (tabBtn && tabContent) {
+                    tabBtn.classList.add('active');
+                    tabContent.classList.add('active');
+                }
+            }
+
+            showStatus(message, type = 'info') {
+                const statusContent = document.getElementById('statusContent');
+                if (statusContent) {
+                    statusContent.innerHTML = message;
+                    statusContent.className = 'status-content ' + type;
+                }
+            }
+
+            showLoading(text = 'Đang xử lý...') {
+                const modal = document.getElementById('loadingModal');
+                const loadingText = document.getElementById('loadingText');
+                if (modal && loadingText) {
+                    loadingText.textContent = text;
+                    modal.classList.remove('hidden');
+                }
+            }
+
+            hideLoading() {
+                const modal = document.getElementById('loadingModal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            copyHWID() {
+                this.copyToClipboard(this.hwid);
+                this.showStatus('✅ Đã copy HWID! Dán HWID này khi nhận key.', 'success');
+            }
+
+            copyLink() {
+                if (this.currentLink) {
+                    this.copyToClipboard(this.currentLink);
+                    this.showStatus('✅ Đã copy link! Mở trình duyệt và dán link để nhận key.', 'success');
+                }
+            }
+
+            copyToClipboard(text) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                }
+            }
+
+            openLink() {
+                if (this.currentLink) {
+                    const urlWithHWID = `${this.currentLink}&hwid=${encodeURIComponent(this.hwid)}`;
+                    window.open(urlWithHWID, '_blank');
+                }
+            }
+
+            setupEventListeners() {
+                const keyInput = document.getElementById('keyInput');
+                if (keyInput) {
+                    keyInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') this.validateKey();
+                    });
+                }
+            }
+
+            startMainScript() {
+                setTimeout(() => {
+                    this.showStatus('🚀 Script đã được kích hoạt thành công! Tận hưởng trải nghiệm premium!', 'success');
+                    document.querySelector('.activation-section').style.opacity = '0.7';
+                    
+                    // Có thể thêm redirect hoặc load script tại đây
+                    console.log('VIP Script activated successfully!');
+                }, 2000);
+            }
+        }
+
+        // Global functions
+        function showSection(sectionId) { keySystem.showSection(sectionId); }
+        function switchTab(tabId) { keySystem.switchTab(tabId); }
+        function createLink() { keySystem.createLink(); }
+        function validateKey() { keySystem.validateKey(); }
+        function checkSavedKey() { keySystem.checkSavedKey(); }
+        function copyHWID() { keySystem.copyHWID(); }
+        function copyLink() { keySystem.copyLink(); }
+        function openLink() { keySystem.openLink(); }
+        function getKey() { keySystem.getKey(); }
+        function copyKey(key) { 
+            navigator.clipboard.writeText(key).then(() => alert('✅ Đã copy key!')); 
+        }
+        function showMainPage() { 
+            document.getElementById('getKeyPage').classList.add('hidden'); 
+            document.getElementById('mainPage').classList.remove('hidden'); 
+        }
+
+        let keySystem;
+        document.addEventListener('DOMContentLoaded', () => {
+            keySystem = new KeySystem();
+        });
+    </script>
+</body>
+</html>
